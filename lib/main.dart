@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'command.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  for(int i = 0; i<10; i++) {
+    print(Command.random().toString());
+  }
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.

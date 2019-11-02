@@ -1,0 +1,117 @@
+//import 'package:flutter/material.dart';
+import 'dart:math';
+
+enum color{red, blue, green, yellow}
+//TODO: Add more actions, such as swipe up, down, left or right, double tap and more.
+enum action{click, swipe, not}
+
+class Command {
+
+  bool simonSays;
+  color col;
+  action act;
+
+  Command() {
+    simonSays = false;
+    col = color.red;
+    act = action.click;
+  }
+
+  Command.random() {
+    var randGen = new Random();
+    int randNum = randGen.nextInt(2);
+
+    //Randomizes simonSays
+    if(randNum==0) {
+      simonSays = false;
+    } else {
+      simonSays = true;
+    }
+
+    //Randomizes color
+    randNum = randGen.nextInt(4);
+    switch (randNum) {
+      case 0: {
+        col = color.red;
+        break;
+      }
+      case 1: {
+        col = color.blue;
+        break;
+      }
+      case 2: {
+        col = color.green;
+        break;
+      }
+      case 3: {
+        col = color.yellow;
+        break;
+      }
+      default :{
+        print('Error in random constructor: Color randomization.');
+      }
+    }
+
+    //Randomizes action
+    randNum = randGen.nextInt(3);
+    switch (randNum) {
+      case 0: {
+        act = action.click;
+        break;
+      }
+      case 1: {
+        act = action.swipe;
+        break;
+      }
+      case 2: {
+        act = action.not;
+        break;
+      }
+      default: {
+        print('Error in random constructor: Action randomization.');
+      }
+    }
+  }
+
+  String toString() {
+    String instruction = '';
+    if(simonSays){
+      instruction = instruction + 'Simon says ';
+    }//TODO: Add decoys, ex: Steve or Sally says.
+    switch (act) {
+      case action.click: {
+        instruction = instruction + 'click ';
+        break;
+      }
+      case action.swipe: {
+        instruction = instruction + 'swipe ';
+        break;
+      }
+      case action.not: {
+        instruction = instruction + 'not ';
+        break;
+      }
+    }
+    switch (col) {
+      case color.red: {
+        instruction = instruction + 'red';
+        break;
+      }
+      case color.blue: {
+        instruction = instruction + 'blue';
+        break;
+      }
+      case color.green: {
+        instruction = instruction + 'green';
+        break;
+      }
+      case color.yellow: {
+        instruction = instruction + 'yellow';
+        break;
+      }
+    }
+
+    instruction[0].toUpperCase();
+    return instruction;
+  }
+}
