@@ -1,4 +1,3 @@
-//import 'package:flutter/material.dart';
 import 'dart:math';
 
 enum color{red, blue, green, yellow}
@@ -22,11 +21,7 @@ class Command {
     int randNum = randGen.nextInt(2);
 
     //Randomizes simonSays
-    if(randNum==0) {
-      simonSays = false;
-    } else {
-      simonSays = true;
-    }
+    simonSays = (randNum == 0) ? false : true;
 
     //Randomizes color
     randNum = randGen.nextInt(4);
