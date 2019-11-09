@@ -106,7 +106,7 @@ class Command {
       }
     }
 
-    instruction[0].toUpperCase();
+    instruction = instruction[0].toUpperCase() + instruction.substring(1);
     return instruction;
   }
 }
