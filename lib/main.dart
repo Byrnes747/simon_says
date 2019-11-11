@@ -41,7 +41,7 @@ class SimonSays extends StatelessWidget {
     );
 
     RaisedButton startBtn = RaisedButton(
-      child: Text('Start/Restart'),
+      child: Text(gm.startBtnText),
       onPressed: () => gm.gameStart(),
     );
 

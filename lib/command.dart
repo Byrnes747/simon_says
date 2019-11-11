@@ -83,7 +83,7 @@ class Command {
         break;
       }
       case action.not: {
-        instruction = instruction + 'not ';
+        instruction = instruction + "touch something other than ";
         break;
       }
     }
