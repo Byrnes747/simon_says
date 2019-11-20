@@ -72,7 +72,15 @@ class Command {
     String instruction = '';
     if(simonSays){
       instruction = instruction + 'Simon says ';
-    }//TODO: Add decoys, ex: Steve or Sally says.
+    }
+    else {
+      var randGen = new Random();
+      int randNum = randGen.nextInt(2);
+
+      if(randNum == 1) {
+        instruction = instruction + 'Sally says ';
+      }
+    }
     switch (act) {
       case action.click: {
         instruction = instruction + 'click ';

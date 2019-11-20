@@ -6,12 +6,14 @@ class GameManager with ChangeNotifier {
 
   List<Command> _commands = [Command.random(), Command.random(), Command.random()]; //Growable List
   int _points = 0;
+  int _highScore = 0;
   int _iterator = 0;
   String _instruction = 'Click "Start" to begin.';
   int _timer = 0;
   bool _stopTimer = false; //Flag used to pause timer.
   bool _canPlay = false; //Flag used to determine if the player should be able to play at a given time.
   String _startBtnText = 'Start';
+  bool _restartInProgress = false;
 
   int get timer => _timer;
 
@@ -31,6 +33,13 @@ class GameManager with ChangeNotifier {
 
   set points(int value) {
     _points = value;
+    notifyListeners();
+  }
+
+  int get highScore => _highScore;
+
+  set highScore(int value) {
+    _highScore = value;
     notifyListeners();
   }
 
@@ -58,25 +67,30 @@ class GameManager with ChangeNotifier {
   }
 
   void gameStart() async{
-    _startBtnText = 'Restart';
-    _canPlay = false;
-    _stopTimer = true;
-    updateTimer(30);
-    _points = 0;
-    _iterator = 0;
-    _commands.clear();
-    for(int i = 0; i<3; i++) {
-      _commands.add(Command.random());
+    if(!_restartInProgress){
+      _restartInProgress = true;
+      _startBtnText = 'Restart';
+      _canPlay = false;
+      _stopTimer = true;
+      updateTimer(30);
+      updateHighScore();
+      _points = 0;
+      _iterator = 0;
+      _commands.clear();
+      for(int i = 0; i<3; i++) {
+        _commands.add(Command.random());
+      }
+      for(int i = 0; i<_commands.length; i++) {
+        updateInstruction(_commands[i].toString() + ' [${i+1}/${_commands.length}]');
+        print(_instruction);
+        await Future.delayed(const Duration(seconds: 2), (){});
+      }
+      updateInstruction('Go! ${_iterator+1}/${_commands.length}');
+      _stopTimer = false;
+      startTimer();
+      _canPlay = true;
+      _restartInProgress = false;
     }
-    for(int i = 0; i<_commands.length; i++) {
-      updateInstruction(_commands[i].toString() + ' [${i+1}/${_commands.length}]');
-      print(_instruction);
-      await Future.delayed(const Duration(seconds: 2), (){});
-    }
-    updateInstruction('Go! ${_iterator+1}/${_commands.length}');
-    _stopTimer = false;
-    startTimer();
-    _canPlay = true;
   }
 
   void printCommands() {
@@ -147,10 +161,10 @@ class GameManager with ChangeNotifier {
   }
 
   gameOver() {
+    updateHighScore();
     _stopTimer = true;
-    updateInstruction('Game Over\nPress "Restart" to try again.');
+    updateInstruction('Game Over\n The instruction said:\n${_commands[_iterator].toString()}');
     _canPlay = false;
-    //TODO: Update highscore if necessary.
   }
 
   nextStep() {
@@ -179,6 +193,13 @@ class GameManager with ChangeNotifier {
     _stopTimer = false;
     startTimer();
     _canPlay = true;
+  }
+
+  updateHighScore() {
+    if(_points > _highScore) {
+      _highScore = _points;
+      // TODO: Store highscore in a file.
+    }
   }
 
 }

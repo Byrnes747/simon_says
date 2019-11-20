@@ -27,7 +27,7 @@ class SimonSays extends StatelessWidget {
       textAlign: TextAlign.center
     );
     Text highScore = Text(
-      'HighScore: 100',
+      'HighScore: ${gm.highScore}',
       textAlign: TextAlign.center,
     );
     Text timer = Text(
