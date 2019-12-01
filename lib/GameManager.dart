@@ -1,6 +1,10 @@
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'command.dart';
+import 'dart:async';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart';
+
 
 class GameManager with ChangeNotifier {
 
@@ -57,9 +61,10 @@ class GameManager with ChangeNotifier {
     notifyListeners();
   }
 
-  GameManager() {
+  GameManager(){
     _points = 0;
     _iterator = 0;
+    _highScore = 0;
     for(int i = 0; i<3; i++) {
       _commands.add(Command.random());
     }
@@ -179,27 +184,65 @@ class GameManager with ChangeNotifier {
   }
 
   nextRound() async{
-    _canPlay = false;
-    _stopTimer = true;
-    updateTimer(30);
-    _iterator = 0;
-    _commands.add(Command.random());
-    for(int i = 0; i<_commands.length; i++) {
-      updateInstruction(_commands[i].toString() + ' [${i+1}/${_commands.length}]');
-      print(_instruction);
-      await Future.delayed(const Duration(seconds: 2), (){});
+    if(!_restartInProgress){
+      _restartInProgress = true;
+      _canPlay = false;
+      _stopTimer = true;
+      updateTimer(30);
+      _iterator = 0;
+      _commands.add(Command.random());
+      for(int i = 0; i<_commands.length; i++) {
+        updateInstruction(_commands[i].toString() + ' [${i+1}/${_commands.length}]');
+        print(_instruction);
+        await Future.delayed(const Duration(seconds: 2), (){});
+      }
+      updateInstruction('Go! ${_iterator+1}/${_commands.length}');
+      _stopTimer = false;
+      startTimer();
+      _canPlay = true;
+      _restartInProgress = false;
     }
-    updateInstruction('Go! ${_iterator+1}/${_commands.length}');
-    _stopTimer = false;
-    startTimer();
-    _canPlay = true;
+
   }
 
-  updateHighScore() {
-    if(_points > _highScore) {
+  updateHighScore() async{
+    if(await readScore()==null){
+      print('readScore() returned null');
+      writeScore(_points);
       _highScore = _points;
-      // TODO: Store highscore in a file.
     }
+    else if(_points > _highScore) {
+      _highScore = _points;
+      writeScore(_highScore);
+      print('Updated high score in file.');
+    }
+  }
+
+  Future<String> get localPath async {
+    final dir = await getApplicationDocumentsDirectory();
+    return dir.path;
+  }
+
+  Future<File> get localFile async {
+    final path = await localPath;
+    return File('$path/hs.txt');
+  }
+
+  Future<int> readScore() async {
+    try{
+      final file = await localFile;
+      String scoreStr = await file.readAsString();
+      int scoreNum = int.parse(scoreStr);
+      print('scoreNum = $scoreNum');
+      return scoreNum;
+    }catch(e){
+      print(e.toString());
+    }
+}
+
+  Future<File> writeScore(int score) async {
+    final file = await localFile;
+    return file.writeAsString(score.toString());
   }
 
 }

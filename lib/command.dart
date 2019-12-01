@@ -1,7 +1,6 @@
 import 'dart:math';
 
 enum color{red, blue, green, yellow}
-//TODO: Add more actions, such as swipe up, down, left or right, double tap and more.
 enum action{click, swipe, not}
 
 class Command {
